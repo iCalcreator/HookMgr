@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ HookMgr manages PHP hooks and associated callables
+
+ Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ Link <https://kigkonsult.se>
+ Support <https://github.com/iCalcreator/HookMgr>
+
+ This file is part of HookMgr.
+
+ HookMgr is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation, either version 3 of the License,
+ or (at your option) any later version.
+
+ HookMgr is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with HookMgr. If not, see <https://www.gnu.org/licenses/>.
+-->
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="true"
+         syntaxCheck="false"
+         bootstrap="autoload.php">
+    <testsuites>
+        <testsuite name="HookMgr Tests">
+            <file>./test/HookMgrTest.php</file>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist
+                addUncoveredFilesFromWhitelist="true"
+                processUncoveredFilesFromWhitelist="true"
+        >
+            <file>./src/HookMgr.php</file>
+        </whitelist>
+    </filter>
+    <logging>
+        <!-- Remove or comment after your own choice-->
+        <!-- All logs will be saved in 'testDocs' folder -->
+
+        <log type="coverage-html"
+             target="testDocs/PHPUnitCoverage"
+             lowUpperBound="35"
+             highLowerBound="70"/>
+        <!--log type="coverage-clover"
+             target="testDocs/coverage.xml"/-->
+        <!--log type="coverage-php"
+             target="testDocs/coverage.serialized"/-->
+        <log type="coverage-text"
+             target="testDocs/PHPUnitReport.txt"
+             showUncoveredFiles="true"/>
+        <!--log type="json"
+             target="testDocs/logfile.json"/-->
+        <!--log type="tap"
+             target="testDocs/logfile.tap"/-->
+        <!--log type="junit"
+             target="testDocs/logfile.xml"
+             logIncompleteSkipped="false"/-->
+        <!--log type="testdox-html"
+             target="testDocs/testdox.html"/-->
+        <!--log type="testdox-text"
+             target="testDocs/testdox.txt"/-->
+    </logging>
+</phpunit>
