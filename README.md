@@ -14,7 +14,7 @@ A callable can be
  
  Define a hook with callable
 ``` php
-HookMgr::addHook( $hook, $callable );
+HookMgr::addAction( $hook, $callable );
 ```
 Invoke callable using hook
 ``` php
