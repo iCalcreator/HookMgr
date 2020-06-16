@@ -58,16 +58,18 @@ $result = HookMgr::apply( $hook );
 
 ---
 
-```HookMgr::count( hook )```
-* Return count of callables for hook, not found return 0
+```HookMgr::count( [ hook ] )```
+* Return 
+  * count of hooks
+  * count of callables for hook
+  * not found hook return 0
 * ```hook``` _string_  
 * Return bool
 * static
 
 ```HookMgr::exists( hook )```
-* Return bool true if hook is set
 * ```hook``` _string_  
-* Return bool
+* Return bool, true if hook is set
 * static
 
 ```HookMgr::getCallables( hook )```

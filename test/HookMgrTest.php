@@ -185,16 +185,21 @@ class HookMgrTest extends TestCase
             HookMgr::apply( $hook, [ $arg ] )
         );
 
+        $this->assertEquals(
+            7,
+            HookMgr::count(),
+            'case 1-23, got ' . HookMgr::count()
+        );
         $hooks = HookMgr::getHooks();
         $this->assertTrue(
-            ( 7 == count( $hooks ))
-            , 'case 1-23, got ' . implode( ',', $hooks )
+            ( 7 == count( $hooks )),
+            'case 1-24, got ' . implode( ',', $hooks )
         );
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
             $hook = $CALLABLE . $tIx;
             $this->assertTrue(
                 in_array( $hook, $hooks ),
-                'case 1-24' . $tIx. ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
+                'case 1-25' . $tIx. ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
             );
         }
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
@@ -203,11 +208,11 @@ class HookMgrTest extends TestCase
             $hooks = HookMgr::getHooks();
             $this->assertFalse(
                 HookMgr::exists( $hook ),
-                'case 1-25' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
+                'case 1-26' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
             $this->assertFalse(
                 in_array( $hook, $hooks ),
-                'case 1-26' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
+                'case 1-27' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
         }
 
@@ -239,12 +244,13 @@ class HookMgrTest extends TestCase
         HookMgr::addActions( $hook, $actions );
         $this->assertTrue( HookMgr::exists( $hook ));
         $this->assertEquals( 8, HookMgr::count( $hook ));
+        $this->assertEquals( 1, HookMgr::count());
 
         foreach( HookMgr::getCallables( $hook ) as $cIx => $action ) {
             $this->assertEquals(
                 $actions[$cIx],
                 $action,
-                'case 2-3-' . $cIx
+                'case 2-4-' . $cIx
             );
         }
 

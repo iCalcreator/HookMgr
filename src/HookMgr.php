@@ -161,12 +161,15 @@ class HookMgr
     }
 
     /**
-     * Return count of callables for hook, not found return 0
+     * Return count of hooks or callables for hook, not found return 0
      *
      * @param string $hook
      * @return bool
      */
-    public static function count( $hook ) {
+    public static function count( $hook = null ) {
+        if( null === $hook ) {
+            return count( self::$actions );
+        }
         return self::exists( $hook ) ? count( self::$actions[$hook] ) : 0;
     }
 
