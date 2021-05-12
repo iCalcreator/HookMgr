@@ -12,15 +12,21 @@
     ],
     "minimum-stability": "stable",
     "license": "lgpl-3.0",
-    "support": {
-        "issues": "https://github.com/iCalcreator/HookMgr/issues"
-    },
     "authors": [
         {
             "name": "Kjell-Inge Gustafsson",
             "email": "ical@kigkonsult.se"
         }
     ],
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://paypal.me/kigkonsult"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/iCalcreator/HookMgr/issues"
+    },
     "autoload": {
         "files": ["autoload.php"],
         "psr-4": { "Kigkonsult\\HookMgr\\": ["src/"] }
