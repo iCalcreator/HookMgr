@@ -58,18 +58,16 @@ $result = HookMgr::apply( $hook );
 
 ---
 
-```HookMgr::count( [ hook ] )```
-* Return 
-  * count of hooks
-  * count of callables for hook
-  * not found hook return 0
+```HookMgr::count( hook )```
+* Return count of callables for hook, not found return 0
 * ```hook``` _string_
 * Return bool
 * static
 
 ```HookMgr::exists( hook )```
+* Return bool true if hook is set
 * ```hook``` _string_
-* Return bool, true if hook is set
+* Return bool
 * static
 
 ```HookMgr::getCallables( hook )```
@@ -100,7 +98,7 @@ $result = HookMgr::apply( $hook );
 
 ###### Sponsorship
 
-Donation using <a href="https://paypal.me/kigkonsult" rel="nofollow">paypal.me/kigkonsult</a> are appreciated. 
+Donation using <a href="https://paypal.me/kigkonsult?locale.x=en_US" rel="nofollow">paypal.me/kigkonsult</a> are appreciated. 
 For invoice, <a href="mailto:ical@kigkonsult.se">please e-mail</a>.
 
 ###### INSTALL

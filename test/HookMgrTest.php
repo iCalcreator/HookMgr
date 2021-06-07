@@ -2,31 +2,36 @@
 /**
  * HookMgr manages PHP hooks and associated callables
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/HookMgr>
- *
  * This file is part of HookMgr.
  *
- * HookMgr is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @license   Subject matter of licence is the software HookMgr.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the HookMgr.
  *
- * HookMgr is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ *            HookMgr is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with HookMgr. If not, see <https://www.gnu.org/licenses/>.
+ *            HookMgr is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with HookMgr. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\HookMgr;
 
-use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Throwable;
+use TypeError;
 
 /*
  * A callable can be
@@ -41,14 +46,16 @@ use RuntimeException;
 
 define ('HALLOWORLD', 'Hallo world' );
 
-function callable1( $arg1 = null, & $arg2 = [] ) {
+function callable1( $arg1 = null, & $arg2 = [] ) : string
+{
     $arg2[] = 1;
     return HALLOWORLD . ' 1 : ' . $arg1;
 }
 
 class Callable3
 {
-    public function callable3Method( $arg1 = null, & $arg2 = [] ) {
+    public function callable3Method( $arg1 = null, & $arg2 = [] ) : string
+    {
         $arg2[] = 3;
         return HALLOWORLD . ' 3 : ' . $arg1;
     }
@@ -56,7 +63,8 @@ class Callable3
 
 class Callable4
 {
-    public static function callable4( $arg1 = null, & $arg2 = [] ) {
+    public static function callable4( $arg1 = null, & $arg2 = [] ) : string
+    {
         $arg2[] = 4;
         return HALLOWORLD . ' 4 : ' . $arg1;
     }
@@ -64,7 +72,8 @@ class Callable4
 
 class Callable5
 {
-    public function __call( $arg1, $argArr2 ) {
+    public function __call( $arg1, $argArr2 ) : string
+    {
         // arg1 : 'method'
         // arg2 : array arguments
         if( isset( $argArr2[1] )) {
@@ -76,7 +85,8 @@ class Callable5
 
 class Callable6
 {
-    public static function __callStatic( $arg1, $argArr2 ) {
+    public static function __callStatic( $arg1, $argArr2 ) : string
+    {
         // arg1 : static 'method'
         // arg2 : array arguments
         if( isset( $argArr2[1] )) {
@@ -87,7 +97,8 @@ class Callable6
 }
 class Callable7
 {
-    public function __invoke( $arg1 = null, & $arg2 = [] ) {
+    public function __invoke( $arg1 = null, & $arg2 = [] ) : string
+    {
         $arg2[] = 7;
         return HALLOWORLD . ' 7 : ' . $arg1;
     }
@@ -101,7 +112,8 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest1() {
+    public function HookMgrTest1()
+    {
         HookMgr::init();
 
         $CALLABLE = 'callable';
@@ -185,21 +197,16 @@ class HookMgrTest extends TestCase
             HookMgr::apply( $hook, [ $arg ] )
         );
 
-        $this->assertEquals(
-            7,
-            HookMgr::count(),
-            'case 1-23, got ' . HookMgr::count()
-        );
         $hooks = HookMgr::getHooks();
         $this->assertTrue(
-            ( 7 == count( $hooks )),
-            'case 1-24, got ' . implode( ',', $hooks )
+            ( 7 == count( $hooks ))
+            , 'case 1-23, got ' . implode( ',', $hooks )
         );
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
             $hook = $CALLABLE . $tIx;
             $this->assertTrue(
                 in_array( $hook, $hooks ),
-                'case 1-25' . $tIx. ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
+                'case 1-24' . $tIx. ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
             );
         }
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
@@ -208,11 +215,11 @@ class HookMgrTest extends TestCase
             $hooks = HookMgr::getHooks();
             $this->assertFalse(
                 HookMgr::exists( $hook ),
-                'case 1-26' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
+                'case 1-25' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
             $this->assertFalse(
                 in_array( $hook, $hooks ),
-                'case 1-27' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
+                'case 1-26' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
         }
 
@@ -223,7 +230,8 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest2() {
+    public function HookMgrTest2()
+    {
         HookMgr::init();
         $hook           = 'hook';
         $arg1           = 'test';
@@ -244,13 +252,12 @@ class HookMgrTest extends TestCase
         HookMgr::addActions( $hook, $actions );
         $this->assertTrue( HookMgr::exists( $hook ));
         $this->assertEquals( 8, HookMgr::count( $hook ));
-        $this->assertEquals( 1, HookMgr::count());
 
         foreach( HookMgr::getCallables( $hook ) as $cIx => $action ) {
             $this->assertEquals(
                 $actions[$cIx],
                 $action,
-                'case 2-4-' . $cIx
+                'case 2-3-' . $cIx
             );
         }
 
@@ -277,7 +284,8 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest3() {
+    public function HookMgrTest3()
+    {
         HookMgr::init();
         $hook           = 'test';
         $arg1           = 'test';
@@ -290,7 +298,7 @@ class HookMgrTest extends TestCase
                 $hook . 1 => [ 'Kigkonsult\HookMgr\callable1' ],
                 $hook . 2 => [ function( $arg1, & $arg2 ) { $arg2[] = 2; return HALLOWORLD . ' 2 : ' . $arg1; } ],
                 $hook . 3 => [ [ $callable3, 'callable3Method' ] ],
-                $hook . 4 => [ [ Callable4::class, 'callable4' ] ],
+                $hook . 4 => [ [ $callable4class, 'callable4' ] ],
                 $hook . 5 => [ [ $callable5, 'someMethod' ] ],
                 $hook . 6 => [ [ Callable6::class, 'someMethod' ] ],
                 $hook . 7 => [ new Callable7() ]
@@ -318,93 +326,113 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest7() {
+    public function HookMgrTest7()
+    {
+        // 'empty' hook, InvalidArgumentException expected
         HookMgr::init();
-
-        $hook = 'hook';
-        // 'empty' hook
-        $ok = 0;
+        $hook = ' ';
+        $ok   = 0;
         try {
-            HookMgr::addAction( ' ', function( $arg = null ) { return HALLOWORLD . ' ' . $arg; } );
+            HookMgr::addAction( $hook, function( $arg = null ) { return HALLOWORLD . ' ' . $arg; } );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( InvalidArgumentException $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test7-1 exp : 2, got : ' . $ok );
+        catch( Throwable $e ) {
+            $ok = 4;
+        }
+        $this->assertEquals( 3, $ok, 'test7-1 exp : 3, got : ' . $ok );
 
-        // empty hook
-        $ok = 0;
+        // empty hook action, TypeError expected
+        HookMgr::init();
+        $hook = 'hook72';
+        $ok   = 0;
         try {
             HookMgr::addAction( $hook, ' ' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( Throwable $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-2 exp : 2, got : ' . $ok );
 
-        // invalid hook
-        $ok = 0;
+        // invalid hook action, TypeError expected
+        HookMgr::init();
+        $hook = 'hook73';
+        $ok   = 0;
         try {
-            HookMgr::addAction( $hook, 123 );
+            HookMgr::addAction( $hook, '123' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( Throwable $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-3 exp : 2, got : ' . $ok );
 
-        // invalid action
-        $ok = 0;
+        // invalid hook action, TypeError expected
+        HookMgr::init();
+        $hook = 'hook74';
+        $ok   = 0;
         try {
             HookMgr::addAction( $hook, [ 74, 74 ] );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( Throwable $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-4 exp : 2, got : ' . $ok );
 
-        // invalid action
+        // invalid hook action, TypeError expected
+        HookMgr::init();
         $callable3 = new Callable3();
-        $ok = 0;
+        $hook      = 'hook75';
+        $ok        = 0;
         try {
             HookMgr::addAction( $hook, [ $callable3, 75 ] );
             $ok = 1;
         }
-        catch( Exception $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
+        }
+        catch( Throwable $e ) {
+            $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-5 exp : 2, got : ' . $ok );
 
-        // invalid action
+        // invalid hook action, TypeError expected
+        HookMgr::init();
         $method = 'fakeMethod';
-        $ok = 0;
+        $hook   = 'hook76';
+        $ok     = 0;
         try {
             HookMgr::addAction( $hook, [ 76, $method ] );
             $ok = 1;
         }
-        catch( Exception $e ) {
+        catch( TypeError $e ) {
             $ok = 2;
+        }
+        catch( Throwable $e ) {
+            $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-6 exp : 2, got : ' . $ok );
 
-        // apply unset hook
+        // apply unset hook, RuntimeException expected
         HookMgr::init();
-        $ok = 0;
+        $hook = 'hook77';
+        $ok   = 0;
         try {
             HookMgr::apply( $hook );
             $ok = 1;
@@ -412,27 +440,31 @@ class HookMgrTest extends TestCase
         catch( RuntimeException $e ) {
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( Throwable $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, 'test7-7 exp : 2, got : ' . $ok );
 
-        $ok = 0;
-        // 3. instantiated object+method : [object, fakeMethodName]
+        // 3. instantiated object+method : [object, fakeMethodName], TypeError expected
+        HookMgr::init();
+        $hook = 'hook78';
+        $ok   = 0;
         $this->assertFalse( method_exists( $callable3, $method ));
-        HookMgr::addAction( $hook, [ $callable3, $method ] );
         try {
-            HookMgr::apply( $hook );
+            HookMgr::addAction( $hook, [ $callable3, $method ] );
             $ok = 1;
-        }
-        catch( RuntimeException $e ) {
+            HookMgr::apply( $hook );
             $ok = 2;
         }
-        catch( Exception $e ) {
+        catch( TypeError $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test7-8 exp : 2, got : ' . $ok );
-
+        catch( RuntimeException $e ) {
+            $ok = 4;
+        }
+        catch( Throwable $e ) {
+            $ok = 5;
+        }
+        $this->assertEquals( 3, $ok, 'test7-8 exp : 2, got : ' . $ok );
     }
-
 }

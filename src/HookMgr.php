@@ -2,25 +2,30 @@
 /**
  * HookMgr manages PHP hooks and associated callables
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/HookMgr>
- *
  * This file is part of HookMgr.
  *
- * HookMgr is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @license   Subject matter of licence is the software HookMgr.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the HookMgr.
  *
- * HookMgr is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ *            HookMgr is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with HookMgr. If not, see <https://www.gnu.org/licenses/>.
+ *            HookMgr is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with HookMgr. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\HookMgr;
 
 use InvalidArgumentException;
@@ -33,7 +38,6 @@ use function count;
 use function get_class;
 use function gettype;
 use function is_array;
-use function is_callable;
 use function is_string;
 use function ksort;
 use function sprintf;
@@ -76,30 +80,16 @@ class HookMgr
     private static $actions = [];
 
     /**
-     * Add single hook with single callable, syntax_only callable check
+     * Add single hook with single callable
      *
      * @param string   $hook
      * @param callable $callable
      * @throws InvalidArgumentException
      */
-    public static function addAction( $hook, $callable ) {
-        switch( true ) {
-            case ( ! is_string( $hook ) || empty( trim( $hook ))) :
-                throw new InvalidArgumentException( self::getMsg( $hook ));
-                break;
-            case ( is_string( $callable ) && empty( trim( $callable ))) :
-                throw new InvalidArgumentException( self::getMsg( $hook, $callable ));
-                break;
-            case ( ! is_array( $callable ) && ! is_callable( $callable, true )) :
-                throw new InvalidArgumentException( self::getMsg( $hook, $callable ));
-                break;
-            case ( ! is_array( $callable )) :
-                break;
-            case ( ! is_callable( $callable, true )) :
-                throw new InvalidArgumentException( self::getMsg( $hook, $callable ));
-                break;
-            default :
-                break;
+    public static function addAction( string $hook, callable $callable )
+    {
+        if( empty( trim( $hook ))) {
+            throw new InvalidArgumentException( self::getMsg( $hook ));
         }
         if( ! isset( self::$actions[$hook] )) {
             self::$actions[$hook] = [];
@@ -117,7 +107,8 @@ class HookMgr
      * @param callable[] $callables
      * @throws InvalidArgumentException
      */
-    public static function addActions( $hook, array $callables ) {
+    public static function addActions( string $hook, array $callables )
+    {
         foreach( array_keys( $callables ) as $cIx ) {
             self::addAction( $hook, $callables[$cIx] );
         }
@@ -129,7 +120,8 @@ class HookMgr
      * @param array $actions
      * @throws InvalidArgumentException
      */
-    public static function setActions( array $actions ) {
+    public static function setActions( array $actions )
+    {
         self::init();
         foreach( $actions as $hook => $callable ) {
             self::addActions( $hook, $callable );
@@ -142,34 +134,36 @@ class HookMgr
      * Opt arguments are used in all invoke(s)
      * To use an argument by-reference, use HookMgr::apply( 'hook', [ & $arg ] );
      *
-     * @param string $hook
-     * @param array  $args
+     * @param string      $hook
+     * @param null|array  $args
      * @return mixed
      * @throws RuntimeException
      */
-    public static function apply( $hook, $args = [] ) {
+    public static function apply( string $hook, $args = [] )
+    {
         if( ! self::exists( $hook )) {
             throw new RuntimeException( self::getMsg( $hook ));
         }
+        $return = null;
         foreach( array_keys( self::$actions[$hook] ) as $hIx ) {
+            /*
             if( ! is_callable( self::$actions[$hook][$hIx], false )) {
                 throw new RuntimeException( self::getMsg( $hook, self::$actions[$hook][$hIx] ));
             }
+            */
             $return = call_user_func_array( self::$actions[$hook][$hIx], $args );
         } // end foreach
         return $return;
     }
 
     /**
-     * Return count of hooks or callables for hook, not found return 0
+     * Return count of callables for hook, not found return 0
      *
      * @param string $hook
-     * @return bool
+     * @return int
      */
-    public static function count( $hook = null ) {
-        if( null === $hook ) {
-            return count( self::$actions );
-        }
+    public static function count( string $hook ) : int
+    {
         return self::exists( $hook ) ? count( self::$actions[$hook] ) : 0;
     }
 
@@ -179,7 +173,8 @@ class HookMgr
      * @param string $hook
      * @return bool
      */
-    public static function exists( $hook ) {
+    public static function exists( string $hook ) : bool
+    {
         return array_key_exists( $hook, self::$actions );
     }
 
@@ -189,32 +184,36 @@ class HookMgr
      * @param string $hook
      * @return array callables[]
      */
-    public static function getCallables( $hook ) {
+    public static function getCallables( string $hook ) : array
+    {
         return self::exists( $hook ) ? self::$actions[$hook] : [];
     }
 
     /**
      * Return array hooks
      *
-     * @return array
+     * @return array  string[]
      */
-    public static function getHooks() {
+    public static function getHooks() : array
+    {
         return array_keys( self::$actions );
     }
 
     /**
      * Clear (remove) all hooks with callables
      */
-    public static function init() {
+    public static function init()
+    {
         self::$actions = [];
     }
 
     /**
-     * Remove single hook (with callable)
+     * Remove single hook (with callable[s])
      *
      * @param string   $hook
      */
-    public static function remove( $hook ) {
+    public static function remove( string $hook )
+    {
         if( self::exists( $hook )) {
             unset( self::$actions[$hook] );
         }
@@ -225,8 +224,9 @@ class HookMgr
      *
      * @return string
      */
-    public static function toString() {
-        $output = null;
+    public static function toString() : string
+    {
+        $output = '';
         $hooks  = array_keys( self::$actions );
         $len    = 0;
         foreach( $hooks as $hook ) {
@@ -246,12 +246,13 @@ class HookMgr
     /**
      * Return (Exception) message, opt with nice rendered callable
      *
-     * @param string   $hook
-     * @param callable $callable
-     * @param bool     $exceptionMsg
+     * @param string        $hook
+     * @param null|callable $callable
+     * @param null|bool     $exceptionMsg
      * @return string
      */
-    private static function getMsg( $hook, $callable = null, $exceptionMsg = true ) {
+    private static function getMsg( string $hook, $callable = null, $exceptionMsg = true ) : string
+    {
         static $ERR1    = 'Invalid/unFound hook (string) : %s';
         static $ERR2    = '%s : %s';
         static $OBJECT  = 'object';
@@ -301,5 +302,4 @@ class HookMgr
         }
         return ( $exceptionMsg ? $ERRPRFX : $EMPTY ) . sprintf( $ERR2, $hook, $type );
     }
-
 }
