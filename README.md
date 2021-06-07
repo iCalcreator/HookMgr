@@ -25,7 +25,7 @@ $result = HookMgr::apply( $hook );
 
 ```HookMgr::addAction( hook, callable )```
 * Add single hook with single callable, _syntax_only_ callable check
-* ```hook``` _string_  
+* ```hook``` _string_
 * ```callable``` _callable_
 * Throws InvalidArgumentException
 * static
@@ -33,7 +33,7 @@ $result = HookMgr::apply( $hook );
 ```HookMgr::addActions( hook, callables )```
 * Add single hook invoking an array of callables
 * Note, if invoked with arguments, arguments are used for all callables
-* ```hook``` _string_  
+* ```hook``` _string_
 * ```callables``` _callable\[]_
 * Throws InvalidArgumentException
 * static
@@ -48,7 +48,7 @@ $result = HookMgr::apply( $hook );
 
 ```HookMgr::apply( hook [, args ] )```
 * Invoke 'hook' action(s), return (last) result
-* ```hook``` _string_  
+* ```hook``` _string_
 * ```args``` _array_ opt, \[ arg1, arg2... ]
   * Opt arguments are used in all hook invokes
   * To use an argument by-reference, use ```HookMgr::apply( 'hook', [ & $arg ] );```
@@ -63,18 +63,18 @@ $result = HookMgr::apply( $hook );
   * count of hooks
   * count of callables for hook
   * not found hook return 0
-* ```hook``` _string_  
+* ```hook``` _string_
 * Return bool
 * static
 
 ```HookMgr::exists( hook )```
-* ```hook``` _string_  
+* ```hook``` _string_
 * Return bool, true if hook is set
 * static
 
 ```HookMgr::getCallables( hook )```
 * Return array callables for hook, not found return []
-* ```hook``` _string_  
+* ```hook``` _string_
 * Return _callable\[]_
 * static
 
@@ -89,7 +89,7 @@ $result = HookMgr::apply( $hook );
 
 ```HookMgr::remove( hook )```
 * Remove single hook with callable(s)
-* ```hook``` _string_  
+* ```hook``` _string_
 * static
 
 ---
@@ -100,7 +100,7 @@ $result = HookMgr::apply( $hook );
 
 ###### Sponsorship
 
-Donation using <a href="https://paypal.me/kigkonsult?locale.x=en_US" rel="nofollow">paypal.me/kigkonsult</a> are appreciated. 
+Donation using <a href="https://paypal.me/kigkonsult" rel="nofollow">paypal.me/kigkonsult</a> are appreciated. 
 For invoice, <a href="mailto:ical@kigkonsult.se">please e-mail</a>.
 
 ###### INSTALL
