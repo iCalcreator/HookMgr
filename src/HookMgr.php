@@ -36,8 +36,8 @@ use function array_keys;
 use function call_user_func_array;
 use function count;
 use function get_class;
-use function gettype;
 use function is_array;
+use function is_object;
 use function is_string;
 use function ksort;
 use function sprintf;
@@ -77,16 +77,16 @@ class HookMgr
     /**
      * @var array   [ hook => [ callable ]]
      */
-    private static $actions = [];
+    private static array $actions = [];
 
     /**
      * Add single hook with single callable
      *
-     * @param string   $hook
+     * @param string $hook
      * @param callable $callable
-     * @throws InvalidArgumentException
+     * @return void
      */
-    public static function addAction( string $hook, callable $callable )
+    public static function addAction( string $hook, callable $callable ) : void
     {
         if( empty( trim( $hook ))) {
             throw new InvalidArgumentException( self::getMsg( $hook ));
@@ -105,9 +105,10 @@ class HookMgr
      *
      * @param string     $hook
      * @param callable[] $callables
+     * @return void
      * @throws InvalidArgumentException
      */
-    public static function addActions( string $hook, array $callables )
+    public static function addActions( string $hook, array $callables ) : void
     {
         foreach( array_keys( $callables ) as $cIx ) {
             self::addAction( $hook, $callables[$cIx] );
@@ -118,9 +119,10 @@ class HookMgr
      * Set array hooks with action(s), each hook (key) with array of callable(s)
      *
      * @param array $actions
+     * @return void
      * @throws InvalidArgumentException
      */
-    public static function setActions( array $actions )
+    public static function setActions( array $actions ) : void
     {
         self::init();
         foreach( $actions as $hook => $callable ) {
@@ -135,11 +137,11 @@ class HookMgr
      * To use an argument by-reference, use HookMgr::apply( 'hook', [ & $arg ] );
      *
      * @param string      $hook
-     * @param null|array  $args
+     * @param array|null $args
      * @return mixed
      * @throws RuntimeException
      */
-    public static function apply( string $hook, $args = [] )
+    public static function apply( string $hook, ? array $args = [] )
     {
         if( ! self::exists( $hook )) {
             throw new RuntimeException( self::getMsg( $hook ));
@@ -202,7 +204,7 @@ class HookMgr
     /**
      * Clear (remove) all hooks with callables
      */
-    public static function init()
+    public static function init() : void
     {
         self::$actions = [];
     }
@@ -211,8 +213,9 @@ class HookMgr
      * Remove single hook (with callable[s])
      *
      * @param string   $hook
+     * @return void
      */
-    public static function remove( string $hook )
+    public static function remove( string $hook ) : void
     {
         if( self::exists( $hook )) {
             unset( self::$actions[$hook] );
@@ -247,15 +250,14 @@ class HookMgr
      * Return (Exception) message, opt with nice rendered callable
      *
      * @param string        $hook
-     * @param null|callable $callable
-     * @param null|bool     $exceptionMsg
+     * @param callable|null $callable
+     * @param bool|null $exceptionMsg
      * @return string
      */
-    private static function getMsg( string $hook, $callable = null, $exceptionMsg = true ) : string
+    private static function getMsg( string $hook, callable $callable = null, ?bool $exceptionMsg = true ) : string
     {
         static $ERR1    = 'Invalid/unFound hook (string) : %s';
         static $ERR2    = '%s : %s';
-        static $OBJECT  = 'object';
         static $OBJECT2 = '(obj)  ';
         static $FCN     = '(fcn)  ';
         static $FQCN    = '(fqcn) ';
@@ -269,7 +271,7 @@ class HookMgr
             return sprintf( $ERR1, var_export( $hook, true ));
         }
         switch( true ) {
-            case ( $OBJECT == gettype( $callable )) :
+            case ( is_object( $callable ) ) :
                 $type = $OBJECT2 . get_class( $callable );
                 break;
             case ( is_string( $callable ) && function_exists(  $callable  )) :
@@ -284,7 +286,7 @@ class HookMgr
             default :
                 $pd = $DC;
                 switch( true ) {
-                    case ( $OBJECT == gettype( $callable[0] )) :
+                    case ( is_object( $callable[0] ) ) :
                         $type = $OBJECT2 . get_class( $callable[0] );
                         $pd = $DA;
                         break;

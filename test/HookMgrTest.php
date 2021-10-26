@@ -112,7 +112,7 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest1()
+    public function HookMgrTest1() : void
     {
         HookMgr::init();
 
@@ -198,15 +198,13 @@ class HookMgrTest extends TestCase
         );
 
         $hooks = HookMgr::getHooks();
-        $this->assertTrue(
-            ( 7 == count( $hooks ))
-            , 'case 1-23, got ' . implode( ',', $hooks )
+        $this->assertEquals(
+            7, count( $hooks ), 'case 1-23, got ' . implode( ',', $hooks )
         );
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
             $hook = $CALLABLE . $tIx;
-            $this->assertTrue(
-                in_array( $hook, $hooks ),
-                'case 1-24' . $tIx. ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
+            $this->assertContains(
+                $hook, $hooks, 'case 1-24' . $tIx . ' , expect ' . $hook . ' in ' . implode( ',', $hooks )
             );
         }
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
@@ -217,9 +215,8 @@ class HookMgrTest extends TestCase
                 HookMgr::exists( $hook ),
                 'case 1-25' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
-            $this->assertFalse(
-                in_array( $hook, $hooks ),
-                'case 1-26' . $tIx. ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
+            $this->assertNotContains(
+                $hook, $hooks, 'case 1-26' . $tIx . ' , expect ' . $hook . ' NOT in ' . implode( ',', $hooks )
             );
         }
 
@@ -230,7 +227,7 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest2()
+    public function HookMgrTest2() : void
     {
         HookMgr::init();
         $hook           = 'hook';
@@ -284,7 +281,7 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest3()
+    public function HookMgrTest3() : void
     {
         HookMgr::init();
         $hook           = 'test';
@@ -326,7 +323,7 @@ class HookMgrTest extends TestCase
      *
      * @test
      */
-    public function HookMgrTest7()
+    public function HookMgrTest7() : void
     {
         // 'empty' hook, InvalidArgumentException expected
         HookMgr::init();
