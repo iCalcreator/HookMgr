@@ -46,7 +46,12 @@ use TypeError;
 
 define ('HALLOWORLD', 'Hallo world' );
 
-function callable1( $arg1 = null, & $arg2 = [] ) : string
+/**
+ * @param string|null $arg1
+ * @param array|null $arg2
+ * @return string
+ */
+function callable1( ? string $arg1 = null, ? array & $arg2 = [] ) : string
 {
     $arg2[] = 1;
     return HALLOWORLD . ' 1 : ' . $arg1;
@@ -54,7 +59,12 @@ function callable1( $arg1 = null, & $arg2 = [] ) : string
 
 class Callable3
 {
-    public function callable3Method( $arg1 = null, & $arg2 = [] ) : string
+    /**
+     * @param string|null $arg1
+     * @param array|null $arg2
+     * @return string
+     */
+    public function callable3Method( ? string $arg1 = null, ? array & $arg2 = [] ) : string
     {
         $arg2[] = 3;
         return HALLOWORLD . ' 3 : ' . $arg1;
@@ -63,7 +73,12 @@ class Callable3
 
 class Callable4
 {
-    public static function callable4( $arg1 = null, & $arg2 = [] ) : string
+    /**
+     * @param string|null $arg1
+     * @param array|null $arg2
+     * @return string
+     */
+    public static function callable4( ? string $arg1 = null, ? array & $arg2 = [] ) : string
     {
         $arg2[] = 4;
         return HALLOWORLD . ' 4 : ' . $arg1;
@@ -72,7 +87,12 @@ class Callable4
 
 class Callable5
 {
-    public function __call( $arg1, $argArr2 ) : string
+    /**
+     * @param string $arg1
+     * @param array $argArr2
+     * @return string
+     */
+    public function __call( string $arg1, array $argArr2 ) : string
     {
         // arg1 : 'method'
         // arg2 : array arguments
@@ -85,7 +105,12 @@ class Callable5
 
 class Callable6
 {
-    public static function __callStatic( $arg1, $argArr2 ) : string
+    /**
+     * @param string $arg1
+     * @param array $argArr2
+     * @return string
+     */
+    public static function __callStatic( string $arg1, array $argArr2 ) : string
     {
         // arg1 : static 'method'
         // arg2 : array arguments
@@ -97,7 +122,12 @@ class Callable6
 }
 class Callable7
 {
-    public function __invoke( $arg1 = null, & $arg2 = [] ) : string
+    /**
+     * @param string|null $arg1
+     * @param array|null $arg2
+     * @return string
+     */
+    public function __invoke( ? string $arg1 = null, ? array & $arg2 = [] ) : string
     {
         $arg2[] = 7;
         return HALLOWORLD . ' 7 : ' . $arg1;
@@ -198,8 +228,8 @@ class HookMgrTest extends TestCase
         );
 
         $hooks = HookMgr::getHooks();
-        $this->assertEquals(
-            7, count( $hooks ), 'case 1-23, got ' . implode( ',', $hooks )
+        $this->assertCount(
+            7, $hooks, 'case 1-23, got ' . implode( ',', $hooks )
         );
         for( $tIx = 1; $tIx <= 7; $tIx++ ) {
             $hook = $CALLABLE . $tIx;

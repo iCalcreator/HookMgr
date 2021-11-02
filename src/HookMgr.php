@@ -75,7 +75,7 @@ class HookMgr
 {
 
     /**
-     * @var array   [ hook => [ callable ]]
+     * @var callable[][]  [ hook => [ callable ]]
      */
     private static array $actions = [];
 
@@ -118,7 +118,7 @@ class HookMgr
     /**
      * Set array hooks with action(s), each hook (key) with array of callable(s)
      *
-     * @param array $actions
+     * @param callable[]|callable[][] $actions
      * @return void
      * @throws InvalidArgumentException
      */
@@ -126,7 +126,7 @@ class HookMgr
     {
         self::init();
         foreach( $actions as $hook => $callable ) {
-            self::addActions( $hook, $callable );
+            self::addActions( $hook, (array) $callable );
         }
     }
 
@@ -141,7 +141,7 @@ class HookMgr
      * @return mixed
      * @throws RuntimeException
      */
-    public static function apply( string $hook, ? array $args = [] )
+    public static function apply( string $hook, ? array $args = [] ) : mixed
     {
         if( ! self::exists( $hook )) {
             throw new RuntimeException( self::getMsg( $hook ));
@@ -184,7 +184,7 @@ class HookMgr
      * Return array callables for hook, not found return []
      *
      * @param string $hook
-     * @return array callables[]
+     * @return callable[]
      */
     public static function getCallables( string $hook ) : array
     {
@@ -194,7 +194,7 @@ class HookMgr
     /**
      * Return array hooks
      *
-     * @return array  string[]
+     * @return string[]
      */
     public static function getHooks() : array
     {
